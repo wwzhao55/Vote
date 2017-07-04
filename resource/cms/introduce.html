@@ -1,0 +1,180 @@
+<!-- introduce.html -->
+<div id='introduce'>
+<form id='indroduce-form'>
+	<div class='pagetitle' style='width:100%;margin-bottom:30px;'>苗绣银装/活动说明</div>
+	<div class='content-list'>
+		<span class='span-name' style='margin-right:50px;'>活动介绍：</span>
+		<textarea class='activity-item input-style' name='introduce'></textarea>
+	</div>
+	<div class='content-list'>
+		<span class='span-name' style='margin-right:50px;'>奖项设置：</span>
+		<textarea class='activity-item input-style' name='reward'></textarea>
+	</div>
+	<div class='content-list'>
+		<span class='span-name' style='margin-right:10px;'>作品&amp;评判标准：</span>
+		<textarea class='activity-item input-style' name='work_judge'></textarea>
+	</div>
+	<span class='span-name' style='margin-right:50px;'>作品征集：</span>
+	<div class='content-list' hidden>
+		<div class='work-box' style="margin-left:120px;">
+			<div class='work-list'>
+				<span class='span-title'>类型:</span>	
+				<input type="text" name="" class='work-input work-title'>
+			</div>
+			<div class='work-list'>
+				<span class='span-title'>描述:</span>
+				<input type="text" name="" class='work-input work-description'>
+			</div>
+		</div>
+		<span class='add-work'><img src="../images/add-work.png"></span>
+	</div>
+</form>
+</div>
+<div class='button-style'>确定</div>
+<script type="text/javascript">
+	$('#sider-introduce').addClass('active');
+	$.ajax({
+		    url: 'introduce.php',
+		    processData: false,
+    		contentType: false,
+		    type: 'GET',
+		    dataType:'json',
+		    success:function(data){
+				if (data.status=='success') {
+					$('textarea[name="introduce"]').html(data.data.introduce);
+					$('textarea[name="reward"]').html(data.data.reward);
+					$('textarea[name="work_judge"]').html(data.data.work_judge);
+					var len = data.data.work_type.length;
+					if (len == 0) {
+						$('.content-list').show();
+					}
+					$.each(data.data.work_type,function(key,val){
+						if(key != parseInt(len*1-1)){
+							var ele = '<div class="content-list">'+
+									'<span class="span-name" style="margin-right:120px;"></span>'+
+									'<div class="work-box">'+
+										'<div class="work-list">'+
+											'<span class="span-title">类型:</span>'+	
+											'<input type="text"  class="work-input work-title" value="'+val.type+'">'+
+										'</div>'+
+										'<div class="work-list">'+
+											'<span class="span-title">描述:</span>'+
+											'<input type="text" class="work-input work-description" value="'+val.description+'">'+
+										'</div>'+
+									'</div>'+
+									// '<span class="add-work"><img src="../images/add-work.png"></span>'+
+								'</div>';
+							$('#introduce').append(ele);
+						}else{
+							var ele = '<div class="content-list">'+
+									'<span class="span-name" style="margin-right:120px;"></span>'+
+									'<div class="work-box">'+
+										'<div class="work-list">'+
+											'<span class="span-title">类型:</span>'+	
+											'<input type="text"  class="work-input work-title" value="'+val.type+'">'+
+										'</div>'+
+										'<div class="work-list">'+
+											'<span class="span-title">描述:</span>'+
+											'<input type="text" class="work-input work-description" value="'+val.description+'">'+
+										'</div>'+
+									'</div>'+
+									'<span class="add-work"><img src="../images/add-work.png"></span>'+
+								'</div>';
+							$('#introduce').append(ele);
+						}	
+					})
+					var height = document.getElementById("right").offsetHeight;
+					var offsetHeight = window.screen.height;
+					console.log(offsetHeight);
+					$('#cover').css('height',height);
+					$('#left').css('height',height);
+					$('#left').css('min-height',offsetHeight);					
+				}else{
+					alert('数据获取失败');
+				}
+			}
+
+	});
+	$('#introduce').on('click','.add-work',function(){
+		var ele = '<div class="content-list">'+
+					'<span class="span-name" style="margin-right:120px;"></span>'+
+					'<div class="work-box">'+
+						'<div class="work-list">'+
+							'<span class="span-title">类型:</span>'+	
+							'<input type="text"  class="work-input work-title">'+
+						'</div>'+
+						'<div class="work-list">'+
+							'<span class="span-title">描述:</span>'+
+							'<input type="text" class="work-input work-description">'+
+						'</div>'+
+					'</div>'+
+					'<span class="add-work"><img src="../images/add-work.png"></span>'+
+				'</div>';
+		$('#introduce').append(ele);
+		$(this).remove();
+		var height = document.getElementById("right").offsetHeight;
+		var offsetHeight = window.screen.height;
+		console.log(offsetHeight);
+		$('#cover').css('height',height);
+		$('#left').css('height',height);
+		$('#left').css('min-height',offsetHeight);
+	});
+	$('.button-style').click(function(){
+		var a_title = [];
+		var a_description = [];
+		var work_type = new Array();
+		var data = new FormData($('#indroduce-form')[0]);
+		$.each($('#introduce .work-title'),function(key,val){
+			if($(this).val().length>0){
+				a_title.push($(this).val());
+			}
+		})
+		$.each($('#introduce .work-description'),function(key,val){
+			if($(this).val().length>0){
+				a_description.push($(this).val());
+			}
+		})
+		if(a_title.length == a_description.length){
+			var middle = new Object();
+			for(var i=0;i<a_title.length;i++){
+				middle['type'] = a_title[i];
+				middle['description'] = a_description[i];
+				work_type.push(middle);
+			}
+			console.log(work_type);
+		}
+		var introduce = $('textarea[name="introduce"]').html();
+		var reward = $('textarea[name="reward"]').html();
+		var work_judge = $('textarea[name="work_judge"]').html();
+	    // data = JSON.stringify(data);
+	    console.log(data);
+	    $.ajax({  
+	        url: 'introduce.php',  
+	        type: 'POST',  
+	        data: {
+	        	introduce:introduce,
+	        	reward:reward,
+	        	work_judge:work_judge,
+	        	work_type:work_type,
+	        },  
+	        type: 'POST',
+	        dataType:'json',
+	        success:function(data){
+	        	if(data.status == "success"){
+	        		alert('更新成功')
+	        	}else{
+	        		alert(data.message);
+	        	}
+	        }
+	    }); 
+	    // $.post('introduce.php',{
+	    // 	introduce:"xxx",
+	    // 	reward:"xxxx",
+	    // 	work_judge:"xxxx",
+	    // 	work_type:[{'type': "dd", 'description': "ss"}, {'type': "dd", 'description': "ss"}]
+
+	    // },function(data){
+	    // 	console.log(data);
+	    // })
+	})
+</script>

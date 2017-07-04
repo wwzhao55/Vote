@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>苗绣银装</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=750, user-scalable=no">
+    <!-- <link href="public/plugin/slider/pageSlider.css" rel="stylesheet"> -->
+	<link href="public/plugin/weui/lib/weui.min.css" rel="stylesheet">
+	<link href="public/plugin/weui/css/jquery-weui.min.css" rel="stylesheet">
+	<link href="resource/css/app.css" rel="stylesheet">
+	<link href="resource/css/app_continue.css" rel="stylesheet">
+	<script src='public/js/jquery.min.js'></script>
+    <script src='public/plugin/slider/pageSlider.min.js'></script>
+	<script src='public/plugin/weui/js/jquery-weui.js'></script>
+	<script src='https://res.wx.qq.com/open/js/jweixin-1.0.0.js'></script>
+	<link href="public/plugin/dropload/dropload.css" rel="stylesheet">
+	<script src='public/plugin/dropload/dropload.min.js'></script>
+</head>
+<body>
+	<?php echo $main_html ?>
+</body>
+</html>
+<script type="text/javascript">
+	var link_str = window.location.href.split("index.php");
+	var link = link_str[0];
+	var share_config;
+	var description;
+	var share_flag;
+	$.ajax({
+		url: 'index.php?destination=main&url='+encodeURIComponent(window.location.href),
+	    type: 'get',
+	    dataType:'json',
+		success: function(data){
+			if(data.status == 'success'){
+				share_config = data.share_config.img;
+				description = data.share_config.description;
+				wx.config({
+                        debug: false,
+                        appId: data.jssdk.appId,
+                        timestamp: data.jssdk.timestamp,
+                        nonceStr: data.jssdk.nonceStr,
+                        signature: data.jssdk.signature,
+                        jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage','chooseImage', 'uploadImage']
+                });
+				wx.ready(function(){
+					if (share_flag) {
+					    //分享详情页
+                        wx.onMenuShareTimeline({
+                            title: title, // 分享标题
+                            link: url, // 分享链接
+                            imgUrl: img_url+share_config, // 分享图标
+                            success: function () {
+                                // 用户确认分享后执行的回调函数
+                                $('body').css('overflow','auto');
+                                $('#cover').hide();
+                                flow = true; 
+                                $("body").unbind("touchmove");
+                            },
+                            cancel: function () {
+                                // 用户取消分享后执行的回调函数
+                                $('body').css('overflow','auto');
+                                $('#cover').hide();
+                                flow = true; 
+                                $("body").unbind("touchmove");
+                            }
+                        });
+                        wx.onMenuShareAppMessage({
+                            title:  title, // 分享标题
+                            desc:  description, // 分享描述
+                            link: url, // 分享链接
+                            imgUrl:  img_url+share_config, // 分享图标
+                            type: '', // 分享类型,music、video或link，不填默认为link
+                            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                            success: function () {
+                                // 用户确认分享后执行的回调函数
+                                $('body').css('overflow','auto');
+                                $('#cover').hide();
+                                flow = true; 
+                                $("body").unbind("touchmove");
+                            },
+                            cancel: function () {
+                                // 用户取消分享后执行的回调函数
+                                $('body').css('overflow','auto');
+                                $('#cover').hide();
+                                var flow = true; 
+                                $("body").unbind("touchmove");
+                            }
+                        });
+					} else {
+					    //分享首页
+                        wx.onMenuShareTimeline({
+                            title: data.share_config.title, // 分享标题
+                            link: link, // 分享链接
+                            imgUrl: link+data.share_config.img, // 分享图标
+                            success: function () {
+                                // 用户确认分享后执行的回调函数
+                            },
+                            cancel: function () {
+                                // 用户取消分享后执行的回调函数
+                            }
+                        });
+                        wx.onMenuShareAppMessage({
+                            title:  data.share_config.title, // 分享标题
+                            desc:  data.share_config.description, // 分享描述
+                            link: link, // 分享链接
+                            imgUrl:  link+data.share_config.img, // 分享图标
+                            type: '', // 分享类型,music、video或link，不填默认为link
+                            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                            success: function () {
+                                // 用户确认分享后执行的回调函数
+                            },
+                            cancel: function () {
+                                // 用户取消分享后执行的回调函数
+                            }
+                        });
+					}
+				});
+				wx.error(function(res){
+					alert(res.errMsg);
+				});
+
+			}	
+		}
+	})
+    //判断手机横竖屏状态：  
+    window.addEventListener("onorientationchange" in window ? "orientationchange" : "resize", function() {  
+            if (window.orientation === 180 || window.orientation === 0) {   
+               //alert('竖屏状态！');  
+            }   
+            if (window.orientation === 90 || window.orientation === -90 ){   
+                $.alert('请不要横屏');  
+            }    
+    }, false); 
+    document.body.addEventListener('touchmove', function (event) {
+    }, true);
+</script>

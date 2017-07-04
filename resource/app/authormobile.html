@@ -1,0 +1,52 @@
+<!-- authormobile -->
+<div id='authormobile'>
+	<div class="mobile-label">手机号</div>
+	<div class="mobile-div">
+		<input type="number" name="" class='mobile' autofocus="autofocus" onkeydown="Phone(event)">
+		<span class='delete-text' style="float: right;margin-right:20px;margin-top: 10px; "><img src="public/images/delete_blank.png"></span>
+	</div>
+<!-- 	<input type="button" name="" class="confirm-btn" value='确定'> -->
+</div>
+<script type="text/javascript">
+	$('.delete-text').click(function(){
+        $('.mobile').val('');
+    });
+    $.ajax({
+			url: 'index.php?destination=author',
+		    type: 'GET',
+		    dataType:'json',
+			success: function(data){
+				if(data.status == 'success'){
+					$('.mobile').val(data.author.mobile);
+				}else{
+					$.alert(data.message);
+				}
+			}
+	})
+	function Phone(){
+		var myreg = /^(((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17([0,1,3]|[6-8]))|(18[0-9]))+\d{8})$/;
+		if (event.keyCode==13) {
+	        if(!myreg.test($('.mobile').val())){
+	            $.alert('请输入正确的手机号')
+	            $('.vote-input').focus();
+	        }else{
+	        	$.ajax({
+					url: 'index.php?destination=authorMobile',
+				    type: 'post',
+				    dataType:'json',
+				    data:{
+				    	mobile:$('.mobile').val()
+				    },
+					success: function(data){
+						if(data.status == 'success'){
+							$.alert(data.message);
+							window.location.href = document.referrer;
+						}else{
+							$.alert(data.message);
+						}
+					}
+				})
+	        }
+	    }
+	}
+</script>

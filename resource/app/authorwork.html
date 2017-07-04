@@ -1,0 +1,137 @@
+<!-- authorwork -->
+<div id='myworklist'>
+    <!-- <div class="nodata-tip" hidden>暂无作品</div> -->
+</div>
+<script type="text/javascript">
+  $('title').html('我的作品');
+  $.ajax({
+    url: 'index.php?destination=authorWork',
+      type: 'GET',
+      dataType:'json',
+    success: function(data){
+      if(data.status == 'success'){
+        $.each(data.author,function(i,val){
+            if (data.author[i].status==1) {
+              var element = '<div class="work-item">'+
+                '<a href="index.php?destination=workDetail&mywork&work_id='+data.author[i].id+'">'+
+                  '<div class="left-div">'+
+                    '<div class="work-item-title">'+
+                      '<span class="author-title-name">'+data.author[i].title+'</span>'+
+                      '<div class="work-status pass-work">已审核</div>'+
+                    '</div>'+
+                    '<div class="work-item-author">作品编号<span>'+parseInt((data.author[i].id)*1+10000)+'</span></div>'+
+                  '</div>'+
+                '</a>'+
+                '<div class="right-div">'+
+                  '<a href="index.php?destination=workEdit&work_id='+data.author[i].id+'">'+
+                    '<img src="public/images/edit.png" class="img-style edit-btn">'+
+                  '</a>'+
+                  '<div class="work-id" hidden>'+data.author[i].id+'</div>'+
+                  '<img src="public/images/delete.png" class="img-style delete-btn">'+
+                '</div>'+
+              '</div>';
+            }else if (data.author[i].status== 0) {
+              var element = '<div class="work-item">'+
+                '<a href="index.php?destination=workDetail&mywork&work_id='+data.author[i].id+'">'+
+                  '<div class="left-div">'+
+                    '<div class="work-item-title">'+
+                      '<span class="author-title-name">'+data.author[i].title+'</span>'+
+                      '<div class="work-status no-pass-work">未通过</div>'+
+                    '</div>'+
+                    '<div class="work-item-author">作品编号<span>'+parseInt((data.author[i].id)*1+10000)+'</span></div>'+
+                  '</div>'+
+                '</a>'+
+                '<div class="right-div">'+
+                  '<a href="index.php?destination=workEdit&work_id='+data.author[i].id+'">'+
+                    '<img src="public/images/edit.png" class="img-style edit-btn">'+
+                  '</a>'+
+                  '<div class="work-id" hidden>'+data.author[i].id+'</div>'+
+                  '<img src="public/images/delete.png" class="img-style delete-btn">'+
+                '</div>'+
+              '</div>';
+            }else if (data.author[i].status== -1) {
+              var element = '<div class="work-item">'+
+                '<a href="index.php?destination=workDetail&mywork&work_id='+data.author[i].id+'">'+
+                  '<div class="left-div">'+
+                    '<div class="work-item-title">'+
+                      '<span class="author-title-name">'+data.author[i].title+'</span>'+
+                      '<div class="work-status wait-check">待审核</div>'+
+                    '</div>'+
+                    '<div class="work-item-author">作品编号<span>'+parseInt((data.author[i].id)*1+10000)+'</span></div>'+
+                  '</div>'+
+                  '</a>'+
+                '<div class="right-div">'+
+                  '<a href="index.php?destination=workEdit&work_id='+data.author[i].id+'">'+
+                    '<img src="public/images/edit.png" class="img-style edit-btn">'+
+                  '</a>'+
+                  '<div class="work-id" hidden>'+data.author[i].id+'</div>'+
+                  '<img src="public/images/delete.png" class="img-style delete-btn">'+
+                '</div>'+
+              '</div>';
+            }
+            $('#myworklist').append(element);
+            $('.nodata-tip').hide();
+        })
+        if ($('.work-item').length==0) {
+            // $('.nodata-tip').show();
+            // $.alert('您未上传作品')
+            $.modal({
+              title: "您未上传作品",
+              text: title,
+              buttons: [
+                  {
+                      text: "返回",
+                      onClick: function () {
+                        $('.weui_dialog_hd').removeClass('model-style');
+                        window.location.href='index.php?destination=workEdit';
+                      }
+                  },
+              ]
+          });
+        }
+      }else{
+        $.alert(data.message);
+      }
+    }
+  })
+  $('#myworklist').on('click','.delete-btn',function(){
+    var ID = parseInt($(this).siblings('.work-id').html());
+    var title = $('.author-title-name').html();
+    $.modal({
+            title: "是否要删除",
+            text: title,
+            buttons: [
+                {
+                    text: "删除", 
+                    onClick: function () {
+                      $.ajax({
+                        url: 'index.php?destination=authorWork',
+                          type: 'post',
+                          dataType:'json',
+                          data:{
+                            id:ID
+                          },
+                        success: function(data){
+                          if(data.status == 'success'){
+                                    $.alert(data.message)   
+                                }else{
+                                  $.alert(data.message)
+                                }
+                                $('.weui_dialog_hd').removeClass('model-style');
+                            }
+                      });
+                  }
+                },
+                {
+                    text: "返回",
+                    onClick: function () {
+                      $('.weui_dialog_hd').removeClass('model-style');
+                        console.log(2)
+                    }
+                },
+            ]
+        });
+        $('.weui_dialog_hd').addClass('model-style');
+    })
+</script>
+

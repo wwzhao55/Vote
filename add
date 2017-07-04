@@ -1,0 +1,43 @@
+//    $(window).scroll(function() {
+        //        if(!rule) return;
+        //        var jl=$("body").scrollTop();
+        //        if (jl>=1) {
+        //            $('#text_cent').hide()
+        //
+        //            $('#text_cent2').animate({scrollTop: '1px'}, 100);
+        //            $('#text_cent2').show();
+        //            $('#text_cent2').animate({top:'0'},400);
+        //
+        //            $('#myWork').hide();
+        //            $('#workList').hide();
+        //
+        //            $('.index-logo').show();
+        //            $('.index-logo-active').hide();
+        //            $('.introduce-logo-active').show();
+        //            $('.introduce-logo').hide();
+        //            $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+        //            $('#tab_second').addClass('weui-bar__item--on_my');
+        //        } else if (jl<=0) {
+        //            $(".weui-bar__item--on_my img").eq(1).css("display","none");
+        //            $(".weui-bar__item--on_my img").eq(0).css("display","inline-block");
+        //
+        //            $(".weui-bar__item--on_my").removeClass("weui-bar__item--on_my");
+        //            $(".weui-tabbar__item").eq(0).addClass("weui-bar__item--on_my");
+        //
+        //            $(".weui-bar__item--on_my img").eq(0).css("display","none");
+        //            $(".weui-bar__item--on_my img").eq(1).css("display","inline-block");
+        //
+        //            $("#text_cent").show();
+        //            $('#text_cent2').hide();
+        //
+        //            $('#workList').hide();
+        //            $('#myWork').hide();
+        //
+        //            $('.index-logo').hide();
+        //            $('.index-logo-active').show();
+        //            $('.introduce-logo-active').hide();
+        //            $('.introduce-logo').show();
+        //            $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+        //            $('#tab_first').addClass('weui-bar__item--on_my');
+        //        }
+        //    });

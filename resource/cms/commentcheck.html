@@ -1,0 +1,111 @@
+<script src="../resource/plugin/laypage/laypage.js"></script>
+<div class='pagetitle' style='width:100%;margin-bottom:30px;'>苗绣银装/作品审核</div>
+<div id="commentList">
+	
+</div>
+<div class="rq">
+</div>
+<div id="pagnation2" style="position: absolute;top: 950px; left: 30%;" class='text-align'></div>
+<div id="commentCheck">
+	
+</div>
+<div id="pagnation1" class='text-align'></div>
+
+<script type="text/javascript">
+	$('#sider-artical').addClass('active');
+
+	$("#commentList").on('click','.PassBtn',function () {
+		var id=parseInt($(this).siblings('.commentId').html());
+		var _this=$(this);
+		$.ajax({
+	            type: "post",
+	            url:'commentCheck.php',
+	            data:{
+	            	id:id,
+	            	type:"1"
+	            },
+	            dataType: "json",
+	            success: function(data){
+	              if(data.status=="success"){
+	                alert("审批通过！");
+	                window.location.reload();
+	              }
+	              else{
+	                alert(data.message);
+	              }
+	           }
+	         });
+		
+	})
+	$("#commentList").on('click','.DelBtn',function () {
+		var id=parseInt($(this).siblings('.commentId').html());
+		$.ajax({
+	            type: "post",
+	            url:'commentCheck.php',
+	            data:{
+	            	id:id,
+	            	type:"0"
+	            },
+	            dataType: "json",
+	            success: function(data){
+	            	console.log(data);
+	              if(data.status=="success"){
+	                alert("删除成功！");
+	                window.location.reload();
+	              }
+	              else{
+	                alert(data.message);
+	              }
+	           }
+	         });
+		
+	})
+
+	$(function(){
+	
+		InitData(0);	
+
+	})
+	function InitData(page){
+		console.log(page)
+		$.ajax({
+		    url: 'commentCheck.php',
+		    type: 'GET',
+		    dataType:'json',
+		    data:{
+		    	page:page
+		    },
+		    success:function(data){
+				if (data.status=='success') {
+					$('#commentList').empty();
+					$.each(data.comment,function(key,val){
+						var ele = '<div class="commentitem">'+
+									'<div class="div_middle">'+val.content+'</div>'+
+									'<a href="../cms/workDetail.php?status=1&id='+val.id+'"><div class="div_left">作品题目：'+val.work_title+'</div></a>'+
+									'<div class="div_right">'+
+										'<span class="comment-btn PassBtn">审核通过</span>'+
+										'<span class="comment-btn DelBtn">删除评论</span>'+
+										'<span class="commentId" hidden>'+val.id+'</span>'+
+									'</div>'+
+								'</div>';
+								$('#commentList').append(ele);
+					})
+					laypage({
+					  cont: 'pagnation1', //容器。值支持id名、原生dom对象，jquery对象,
+					  pages: data.last_page, //总页数
+					  curr:data.current_page,
+					  first: false,
+					  last: false,
+					  jump: function(obj,first){
+						    if(!first){
+						    	InitData(parseInt(obj.curr*1-1));
+						    }
+						  }
+					});
+				}else{
+					alert(data.message);
+				}
+			}
+		})
+	}
+</script>

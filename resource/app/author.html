@@ -1,0 +1,143 @@
+
+<style>
+.weui-bar__item--on_my p{
+  color:#F5A623;
+}
+.weui-tabbar:before {
+    top: -15px;
+    border-top: 0px solid #c0bfc4; 
+    /*background-color: #fff;*/
+}
+.weui-tabbar {
+    /*height: 118px;*/
+    height: 80px;
+    padding-top: 15px;
+    background-color: #fff;
+}
+
+</style>
+
+<!-- 我的 -->
+<div id="myWork" >
+    <div class="input-group-div">
+        <div class="input-group">
+            <span class="label-info">姓名</span>
+            <span class="label-info_last xinxi1"></span>
+      </div>
+        <div class="input-group">
+            <span class="label-info">国籍</span>
+            <span class="label-info_last xinxi2"></span>
+       </div>
+        <div class="input-group">
+            <span class="label-info">电子邮箱</span>
+            <span class="label-info_last xinxi3"></span>
+      </div>
+ 		<a href="index.php?destination=authorMobile">
+	        <div class="input-group" style="margin-left: 0px;">
+	            <span class="label-info" style="margin-left: 30px;">手机号</span>
+	            <span class="label-info_last xinxi4"></span>
+	               <img src="public/images/arrow.png" class="link-href">  
+	        </div>
+	    </a>
+    </div>
+    <div class="link-div">
+    	<a href="index.php?destination=authorWork">
+	        <div class="div-list">
+	            <span class="label-info">我的作品</span>
+	              <img src="public/images/arrow.png" class="link-href">
+	        </div>
+	    </a>
+	    <a href="index.php?destination=workEdit">
+	        <div class="div-list" style="margin-left: 0px;">
+	            <span class="label-info" style="margin-left: 30px;">草稿</span> 
+	              <img src="public/images/arrow.png" class="link-href">
+	            <span class="span_link xinxi5"></span>
+	        </div>
+	    </a>
+    </div>
+</div>
+
+
+<div class="weui-tab" style="position: static;">
+
+  <div class="weui-tabbar" style=" ">
+    <a href="javascript:;" class="weui-tabbar__item">
+      <!-- <span class="weui-badge" style="position: absolute;top: -.4em;right: 110px;">8</span> -->
+      <div class="weui-tabbar__icon">
+        <img src="public/images/first.png" alt="">
+        <img src="public/images/first_active.png" alt="" style="display: none">
+      </div>
+      <p class="weui-tabbar__label">首页</p>
+    </a>
+    <a href="javascript:;" class="weui-tabbar__item ">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/actnote.png" alt="">
+        <img src="public/images/actnote_active.png" alt="" style="display: none">
+      </div>
+      <p class="weui-tabbar__label">活动介绍</p>
+    </a>
+    <a href="javascript:;" class="weui-tabbar__item">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/allwork.png" alt="">
+        <img src="public/images/allwork_active.png" alt="" style="display: none">
+      </div>
+      <p class="weui-tabbar__label">全部作品</p>
+    </a>
+    <a href="javascript:;" class="weui-tabbar__item weui-bar__item--on_my">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/my.png" alt="" style="display: none">
+        <img src="public/images/my_active.png" alt="">
+      </div>
+      <p class="weui-tabbar__label">我的</p>
+    </a>
+  </div>
+</div>
+
+<script>
+$(function () {
+  
+    $.ajax({
+        url: 'index.php?destination=author',
+        type: 'get',
+        dataType:'json',
+        success: function(data){
+          if(data.status == 'success'){
+            $(".xinxi1").html(data.author.name);
+            $(".xinxi2").html(data.author.nationality);
+            $(".xinxi3").html(data.author.email);
+            $(".xinxi4").html(data.author.mobile);
+            $(".xinxi5").html(data.author.count);
+          }else{
+            $.alert(data.message)
+          }
+        }
+      })  
+})
+  
+$(".weui-tabbar__item").on("click",function () {
+  $(".weui-bar__item--on_my img").eq(1).css("display","none");
+  $(".weui-bar__item--on_my img").eq(0).css("display","inline-block");
+  $(".weui-bar__item--on_my").removeClass("weui-bar__item--on_my");
+  $(this).addClass("weui-bar__item--on_my");
+  $(".weui-bar__item--on_my img").eq(0).css("display","none");
+  $(".weui-bar__item--on_my img").eq(1).css("display","inline-block");
+  // alert("跳转到"+$(".weui-bar__item--on_my p").html());
+
+  // 更新页面
+  var neirong=$(".weui-bar__item--on_my p").html();
+  if (neirong=='首页') {
+    window.location.href='index.php?destination=main&search_string=0';
+  } else if (neirong=='活动介绍') {
+    window.location.href='index.php?destination=main&search_string=1';    
+  } else if (neirong=='全部作品') {
+    window.location.href='index.php?destination=workList';    
+  } else if (neirong=='我的') {
+    window.location.href='index.php?destination=author';
+  }
+
+})
+
+$(".span_link,.link-href").on("click",function () {
+  // alert("跳转到"+$(this).siblings("span").html());
+})
+</script>

@@ -1,0 +1,96 @@
+<!-- datacenter -->
+<link href="//cdn.bootcss.com/c3/0.4.11/c3.min.css" rel="stylesheet">
+<script src="//cdn.bootcss.com/d3/3.5.17/d3.min.js"></script>
+<script src="//cdn.bootcss.com/c3/0.4.11/c3.min.js"></script>
+<div class='pagetitle'>苗绣银装/统计中心</div>
+<div class="worklink"><a href="workCheck.php">待审核作品(<span id="waitWork"></span>)>></a></div>
+<div class='list-block'>
+    <span class='chart-title'>投票数</span>
+    <span class='chart-num vote'></span>
+    <div id='canvasDiv1' class='my-chart'></div>
+</div>
+<div class='list-block'>
+    <span class='chart-title'>作品数</span>
+    <span class='chart-num work'></span>
+    <div id='canvasDiv2' class='my-chart'></div>
+</div>
+<div class='list-block'>
+    <span class='chart-title'>选手数</span>
+    <span class='chart-num author'></span>
+    <div id='canvasDiv3' class='my-chart'></div>
+</div>
+<div class='list-block'>
+    <span class='chart-title'>评论数</span>
+    <span class='chart-num comment'></span>
+    <div id='canvasDiv4' class='my-chart'></div>
+</div>
+<script type="text/javascript">
+    $('#sider-activity').addClass('active');
+	
+	function ajaxPost(){
+		$.ajax({
+		    url: 'datacenter.php',
+		    async: false,
+		    type: 'GET',
+		    dataType:'json',
+		    success:function(data){
+				if (data.status=='success') {
+					$('.vote').html(data.data.vote_count);
+					$('.work').html(data.data.work_count);
+					$('.author').html(data.data.author_count);
+					$('.comment').html(data.data.comment_count);
+					$('#waitWork').html(data.data.work_audit_count);
+					var aname = ['vote_count_array', 'work_count_array', 'comment_count_array', 'author_count_array'];
+					var yname = ['投票数', '作品数', '选手数', '评论数'];
+					var x = [];
+					var y = [];
+					for (var i = 0; i < aname.length; i++) {
+						x = [], y = [];
+						x.push('x');
+						y.push(yname[i]);
+						for(var j = 0; j < data.data[aname[i]].length; j++) {
+							var val = data.data[aname[i]][j];
+							x.push(val.created_at*1000);
+							y.push(val.count);
+						}
+						initData(x, y, '#canvasDiv'+(i+1));
+					}
+				}else{
+					alert('数据获取失败');
+				}
+			}
+
+		});
+	}
+	function add0(m){return m<10?'0'+m:m }
+	function format(date){
+		var time = new Date(parseInt(date*1000));
+		//var y = time.getFullYear();
+		var m = time.getMonth()+1;
+		var d = time.getDate();
+		var h = time.getHours();
+		var mm = time.getMinutes();
+		var s = time.getSeconds();
+		return add0(m)+'-'+add0(d);
+	}
+	function initData(x,y,divID){
+		var chart = c3.generate({
+	        bindto: divID,
+	        data: {
+	        	x: 'x',
+	            columns: [
+	                x,y
+	            ]
+	        },
+	        axis: {
+		        x: {
+		        	type: 'timeseries',
+		            tick: {
+		            	format: '%m-%d'
+		            }
+		        }
+		    }
+	    });
+	}
+	ajaxPost();
+</script>

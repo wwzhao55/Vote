@@ -1,0 +1,353 @@
+<!-- workdetail -->
+<div id="workDetail">
+	<div class="workdetail-title">
+		<span>《创新设计大赛》参与作品</span>
+		<a href="index.php?destination=workEdit">
+			<span class="inroll">立即报名<img src="public/images/inroll.png"></span>
+		</a>
+	</div>
+	<div class="workdetail-des">
+		<div class="workDetail-title">
+			<span class="work-title" style="padding-left: 0;"></span>
+			<!-- 我的->我的作品->作品编辑 -->
+			<span class="work-detail-logo"></span>
+		</div> 
+		<div class="workDetail-author">
+			<span class="author-name">
+				<span class='author-name-title'></span>
+				－作品编号
+				<span class='work-code'></span>
+			</span>
+		 	<span class='workdetail-time'></span>
+		</div>
+	</div>
+	<div class="workdetail-img">
+		<img src="" class="main-img">
+	</div>
+	<div id="content-pic">
+		
+	</div>
+	<div class="workdetail-vedio">
+		<iframe height="350px" width="100%" src="" frameborder="0" allowfullscreen="allowfullscreen" id="vedio-src"></iframe>
+	</div>
+	<div class="workdetail-article">
+		<div class="article-title">游客评论</div>
+	</div>
+	<!-- 作品列表进入 -->
+	<div class="workdetail-write">
+		<div class="div-input">
+			<!-- <input type="text" name="" placeholder="写评论" class="vote-input"> -->
+			<input class="vote-input" placeholder="写评论" onkeydown="comment(event)" type="text" />
+		</div>
+		<div class="btn-vote"><img src="public/images/btn_vote.png">
+			<span class="vote_number"></span>
+			<span class="vote_label">投票</span>
+		</div>
+	</div>
+	<!-- 我的作品进入 -->
+	<div class="workdetail-edit" hidden>
+		<div class="edit-bottom btn-left">
+			<img class="order-img" src='public/images/order.png'>
+			<span class='work-order-num'></span>名
+		</div>
+		<div class="edit-bottom btn-right">去拉票</div>
+	</div>
+	<!-- ###########################################################################我的->我的作品->作品编辑 -->
+</div>
+<div id="cover" style="display: none;">
+	<span class="share-tip">点击右上角分享</span>
+	<img src='public/images/share.png' class='share-img'>
+</div>
+<script>
+//	$('title').html('简雅·名族文化字体');
+	var flow = true; 
+	function getUrlParam(name){
+		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+		if (r!=null) 
+		return unescape(r[2]); 
+		return null; //返回参数值
+	} 
+	var Id = parseInt(getUrlParam('work_id'));
+	var url = window.location.href;
+	var b = window.location.href.split("&");
+	var order = 1;
+	var title;
+	var c = window.location.href.split("index.php");
+	var img_url = c[0];
+	share_flag = true;
+
+	$.ajax({
+			url: 'index.php?destination=workDetail',
+		    type: 'GET',
+		    dataType:'json',
+		    data:{
+		    	work_id:Id,
+		    },
+			success: function(data){
+				if(data.status == 'success'){
+					// 从我的作品进入的详情页
+					var mywork = false;
+					for (var i = 0; i < b.length; i++)
+						if (b[i] == 'mywork') {
+							mywork = true;
+							break;
+						}
+					if (mywork) {
+					    console.log(b[b.length-2]);
+						$('.workdetail-title').hide();
+						if (data.data.status==1) {
+							var logo = '<span class="work-status pass-work" style="float: none;margin-top:0;">已审核</span>'+
+										'<a href="index.php?destination=workEdit&work_id='+Id+'"><img class="work-edit" src="public/images/edit.png"></a>';
+							$('.work-detail-logo').append(logo);
+							$('.workdetail-edit').show();
+							$('.workdetail-write').hide();
+						}else if(data.data.status==0){
+							var logo = '<span class="work-status no-pass-work" style="float: none;margin-top:0;">未通过</span>'+
+										'<a href="index.php?destination=workEdit&work_id='+Id+'"><img class="work-edit" src="public/images/edit.png"></a>';
+							$('.work-detail-logo').append(logo);
+							$('.workdetail-edit').show();
+							$('.workdetail-write').hide();
+							$('.btn-right').addClass('disabled');
+						}else if (data.data.status== -1) {
+							var logo = '<span class="work-status wait-check" style="float: none;margin-top:0;">待审核</span>'+
+										'<a href="index.php?destination=workEdit&work_id='+Id+'"><img class="work-edit" src="public/images/edit.png"></a>';
+							$('.work-detail-logo').append(logo);
+							$('.workdetail-edit').show();
+							$('.workdetail-write').hide();
+							$('.btn-right').addClass('disabled');
+						}
+					}
+					if (data.data.video_src.length == 0) {
+						$('.workdetail-vedio').hide();
+					}else{
+						$('#vedio-src').attr('src',"https://player.youku.com/embed/"+data.data.video_src);
+					}
+					title = data.data.title;
+					$('title').html(data.data.title);
+					$('.work-title').html(data.data.title);
+					$('.author-name-title').html(data.data.author_name);
+					$('.work-code').html(parseInt(Id*1+10000))
+					var ele_p = '<p>'+data.data.description+'</p>';
+					$('.workdetail-des').append(ele_p);
+					$('.main-img').css('background-image','url('+data.data.main_img_src+')');
+					$('.workdetail-time').html(format(data.data.created_at));
+					if (data.data.status==1) {
+						$('.work-order-num').html(data.data.rank);
+					}else{
+						$('.work-order-num').html('暂无排');
+					}
+					$('.vote_number').html(data.data.work_vote_count+"票");
+					if(data.data.img.length>0){
+                            var imgList = data.data.img.split(";");
+                            for(var i = 0; i < imgList.length; i ++) { 
+                                var ele_img = '<div class="img-show">'+
+                                                '<img src="" class="content-image-box main-img-src" style="background-image: url('+imgList[i]+')">'+
+                                            '</div>';
+                                $('#content-pic').append(ele_img);
+                            }
+                    }
+				}else{
+					$.alert(data.message);
+					$('#workDetail').hide();
+				}
+			}
+	})
+	$.ajax({
+		url: 'index.php?destination=comment',
+	    type: 'GET',
+	    dataType:'json',
+	    data:{
+	    	id:Id,
+	    	page:0
+	    },
+		success: function(data){
+			if(data.status == 'success'){
+				$.each(data.author,function(i,val){
+					var comment = '<div class="article-list">'+
+									'<div class="people-niker">游客'+order+'<span class="article-time">'+format(data.author[i].created_at)+'</span></div>'+
+									'<div class="people-content">'+data.author[i].content+'</div>'+
+								'</div>';
+					$('.workdetail-article').append(comment);
+					order++;
+				})
+			}
+		}
+	})
+	function add0(m){return m<10?'0'+m:m }
+	function format(date){
+		var time = new Date(parseInt(date*1000));
+		var y = time.getFullYear();
+		var m = time.getMonth()+1;
+		var d = time.getDate();
+		var h = time.getHours();
+		var mm = time.getMinutes();
+		var s = time.getSeconds();
+		return y+'-'+add0(m)+'-'+add0(d);
+	}
+	$('.btn-vote').click(function(){
+		$.ajax({
+				url: 'index.php?destination=vote',
+			    type: 'post',
+			    dataType:'json',
+			    data:{
+			    	work_id:Id,
+			    },
+				success: function(data){
+					if(data.status == 'success'){
+						$.modal({
+				            title: "<img src='public/images/success.png'>",
+				            text: "投票成功",
+				            buttons: [
+				                { text: "帮他拉票", onClick: function(){ 
+				                	//分享
+				                	flow = false;
+				                	document.body.scrollTop = document.documentElement.scrollTop = 0;
+									$('body').css('overflow','hidden');
+				                	$('#cover').show();
+				                	if (!flow) {
+				                		$("body").bind("touchmove",function(event){
+											event.preventDefault();
+										});
+				                	}
+				                } 
+				            },
+				                { text: "返回", onClick: function(){
+				                	flow = true;
+				             } 
+				         },
+				            ]
+				        });
+					}else{
+						$.alert(data.message)
+					}
+				}
+			})  
+	})
+	$('.btn-right').click(function(){
+		if($(this).hasClass('disabled')){
+
+		}else{
+		    console.log(img_url+share_config);
+		    flow = false;
+			document.body.scrollTop = document.documentElement.scrollTop = 0;
+			$('body').css('overflow','hidden');
+			$('#cover').show();
+			if (!flow) {
+        		$("body").bind("touchmove",function(event){
+					event.preventDefault();
+				});
+        	}
+		}
+	})
+	
+	//评论加载
+	var page = 1;
+    // dropload
+    var dropload = $('body').dropload({
+        scrollArea : window,
+        domDown : {
+		    domClass : 'dropload-down detail',
+		    domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+		    domLoad : '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+		    domNoData : '<div class="dropload-noData">没有更多评论了</div>'
+		},
+        loadDownFn : function(me){
+        	console.log(page);
+        	$.ajax({
+				url: 'index.php?destination=comment',
+			    type: 'GET',
+			    dataType:'json',
+			    data:{
+			    	id:Id,
+			    	page:page
+			    },
+				success: function(data){
+					if(data.status == 'success'){
+						order++;
+						page++;
+						var comment = '';
+						$.each(data.author,function(i,val){
+							comment += '<div class="article-list">'+
+											'<div class="people-niker">游客'+order+'<span class="article-time">'+format(data.author[i].created_at)+'</span></div>'+
+											'<div class="people-content">'+data.author[i].content+'</div>'+
+										'</div>';
+						})
+						// 为了测试，延迟1秒加载
+						setTimeout(function(){
+							$('.workdetail-article').append(comment);
+							// 每次数据加载完，必须重置
+							me.resetload();
+						},1000);
+					}else{
+						// 锁定
+						me.lock();
+						// 无数据
+						me.noData();
+						 // return false;
+						$('.dropload-down').html('没有更多评论了')
+					}	
+				},
+				error: function(xhr, type){
+					console.log('Ajax error!');
+					// 即使加载出错，也得重置
+					me.resetload();
+				}
+			});
+        },
+        threshold : 50
+    });
+
+    //提交评论
+    function comment(){
+    	var content = $('.vote-input').val();
+    	if (event.keyCode==13) {
+    		if(content.length==0){
+	    		$.alert('请输入评论')
+	    	}else if(content.length>100){
+	    		$.alert('评论字数不超过100字')
+	    	}else{
+	    		$.ajax({
+					url: 'index.php?destination=comment',
+				    type: 'post',
+				    dataType:'json',
+				    data:{
+				    	id:Id,
+				    	content:content
+				    },
+					success: function(data){
+						if(data.status == 'success'){
+							$.alert(data.message)
+							$('.vote-input').blur();
+							$('.vote-input').val('');
+						}else{
+							$.alert(data.message)
+						}
+					}
+				})
+	    	}
+	    return false;
+    	}
+    }
+    $('#cover').click(function(){
+    	$('#cover').hide();
+    	$('body').css('overflow','auto');
+    	flow = true;
+    	$("body").unbind("touchmove");
+    })
+ 	var handleStart = function (event) {
+ 		var touch = event.touches[0];
+        var ele = document.elementFromPoint(touch.clientX, touch.clientY);
+        if ($(ele).hasClass('vote-input')) {
+            $('body').scrollTop($('#workDetail').scrollHeight());
+        }
+ 	}
+ 	document.addEventListener("touchstart", handleStart, false);
+ 	if (flow) {
+ 		$("body").unbind("touchmove");
+ 	}else{
+ 		$("body").bind("touchmove",function(event){
+			event.preventDefault();
+		});
+ 	}
+</script>

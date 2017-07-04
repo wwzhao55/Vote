@@ -1,0 +1,355 @@
+<!-- workcheck -->
+<script src="../resource/plugin/layer/layer.js"></script>
+<script src="../resource/plugin/laypage/laypage.js"></script>
+<script src="../resource/js/unslider.min.js"></script>
+<style type="text/css">
+	a {
+    	color: inherit;
+	}
+</style>
+<div id='main-body'>
+	<div class='pagetitle' style='width:100%;margin-bottom:30px;'>苗绣银装/作品审核</div>
+	<span class='choose-type active'>待审核</span>
+	<span class='choose-type'>已审核</span>
+	<div class='no-pass alllist'>
+		<div id='no-pass-table'>
+		</div>
+		<div id="pagnation1" class='text-align'></div>
+	</div>
+	<div class='pass alllist' style='display: none;'>
+		<div id='pass-table'>
+		</div>
+		<div id="pagnation2" class='text-align'></div>
+	</div>
+</div>
+<div id='detail-body' style="display: none;" class="alllist">
+	<div class='pagetitle' style='width:100%;margin-bottom:30px;'>苗绣银装/作品详情</div>
+	<div class="detial-pic">
+		<img src="" class='detial-pic-src'>
+	</div>
+	<div class="detail-des">
+		<div class="large-head">作品标题1</div>
+		<div class="detail-des-body"></div>
+	</div>
+	<div class='roll-pic'>
+		<div class="banner" id="b04" style="min-width: 100%;">
+		    <ul class='Carousel'></ul>
+		</div>
+	</div>
+	<div class="detail-bottom">
+		<div style="display: none;" class='id detail-id'></div>
+		<button class='detail-button Pass'>审核通过</button>
+		<button class='detail-button Stop'>审核不通过</button>
+		<button class='detail-button Delete'>删除作品</button>
+	</div>
+</div>
+	<!-- pass弹窗 -->
+	<div class="pass-window" style="display: none;">
+		<div class="window-tip">作品审核已通过</div>
+		<div class="window-tip">已进行发布</div>
+		<button class="btn-sure">确定</button>
+	</div>
+	<!-- del弹窗 -->
+	<div class="del-window" style="display: none;">
+		<div class="window-tip">您确定删除作品</div>
+		<div class="window-tip window-work-head">作品标题</div>
+		<div style="display: none;" class='id detail-id'></div>
+		<button class="btn-style btn-left">确定</button>
+		<button class="btn-style btn-right">取消</button>
+	</div>
+	<div class="stop-window" style="display: none;">
+		<div class="window-tip">请输入审核不通过的原因：</div>
+		<textarea class='stop-reason' placeholder="请输入不通过原因..."></textarea>
+		<button class="btn-style btn-stop">确定</button>
+		<button class="btn-style btn-right">取消</button>
+	</div>
+<script type="text/javascript">
+	$('#sider-setter').addClass('active');
+	NoPassData(-1,0);
+	$('.choose-type').click(function(){
+		$('.choose-type').removeClass('active');
+		$(this).addClass('active');
+		if($(this).html()=='待审核'){
+			$('.no-pass').show();
+			$('.pass').hide();
+			NoPassData(-1,0);
+			$('.Pass').show();
+		}else{
+			$('.no-pass').hide();
+			$('.pass').show()
+			PassData(1,0);
+			$('.Pass').hide();	
+		}
+	});
+	function NoPassData(param,page){
+		$.ajax({
+		    url: 'workCheck.php',
+		    type: 'GET',
+		    dataType:'json',
+		    data:{
+		    	status:param,
+		    	page:page
+		    },
+		    success:function(data){
+				if (data.status=='success') {
+					$('#no-pass-table').empty();
+					$.each(data.comment,function(key,val){
+						var ele1 = '<div class="worklist">'+
+									'<div class="work-pic"><img src="../'+val.main_img_src+'" class="work-pic-src"></div>'+
+									'<div class="work-head">'+
+										'<div class="large-head">'+val.title+'</div>'+
+										'<div class="small-head">'+val.name+'</div>'+
+									'</div>'+
+									'<div class="work-deal">'+
+										'<span class="btn-deal Pass">通过</span>'+
+										'<span class="btn-deal Delete">删除</span>'+
+										'<a href="../cms/workDetail.php?status=-1&id='+val.id+'"><span class="btn-deal Detail">→</span></a>'+
+										'<span style="display: none;" class="btn-deal id">'+val.id+'</span>'+
+									'</div>'+
+								'</div>';
+						$('#no-pass-table').append(ele1);
+					})
+					laypage({
+					  cont: 'pagnation1', //容器。值支持id名、原生dom对象，jquery对象,
+					  pages: data.last_page, //总页数
+					  curr: data.current_page,
+					  first: false,
+					  last: false,
+					  jump: function(obj,first){
+						    if(!first){
+						    	NoPassData(-1,parseInt(obj.curr*1-1));
+						    }
+						  }
+					});
+					var height = document.getElementById("right").offsetHeight;
+					var offsetHeight = window.screen.height;
+					$('#cover').css('height',height);
+					$('#left').css('height',height);
+					$('#left').css('min-height',offsetHeight);
+
+				}else{
+					alert(data.message);
+				}
+			}
+		})
+	}
+	function PassData(param,page){
+		$.ajax({
+		    url: 'workCheck.php',
+		    type: 'GET',
+		    dataType:'json',
+		    data:{
+		    	status:param,
+		    	page:page
+		    },
+		    success:function(data){
+				if (data.status=='success') {
+					$('#pass-table').empty();
+					$.each(data.comment,function(key,val){
+						var ele1 = '<div class="worklist">'+
+									'<div class="work-pic"><img src="../'+val.main_img_src+'" class="work-pic-src"></div>'+
+									'<div class="work-head">'+
+										'<div class="large-head">'+val.title+'</div>'+
+										'<div class="small-head">'+val.name+'</div>'+
+									'</div>'+
+									'<div class="work-deal">'+
+										'<span class="btn-deal Delete">删除</span>'+
+										'<a href="../cms/workDetail.php?status=1&id='+val.id+'"><span class="btn-deal Detail">→</span></a>'+
+										'<span style="display: none;" class="btn-deal id">'+val.id+'</span>'+
+									'</div>'+
+								'</div>';
+						$('#pass-table').append(ele1);
+					})
+					
+					laypage({
+					  cont: 'pagnation2', //容器。值支持id名、原生dom对象，jquery对象,
+					  pages: data.last_page, //总页数
+					  curr: data.current_page,
+					  first: false,
+					  last: false,
+					  jump: function(obj,first){
+						    if(!first){
+						    	PassData(1,parseInt(obj.curr*1-1));
+						    }
+						  }
+					});
+					var height = document.getElementById("right").offsetHeight;
+					var offsetHeight = window.screen.height;
+					$('#cover').css('height',height);
+					$('#left').css('height',height);
+					$('#left').css('min-height',offsetHeight);
+				}else{
+					alert(data.message);
+				}
+			}
+		})
+	}
+	var ID;
+	// 通过
+	$('.alllist').on('click','.Pass',function(){
+		pass_index= layer.open({
+                    type: 1,
+		            title: false,
+		            skin: 'layui-layer-demo', //样式类名
+		            closeBtn: 0, //不显示关闭按钮
+		            shift: 2,
+		            shadeClose: true, //开启遮罩关闭
+                    area: ['400px', '200px'], 
+                    content: $('.pass-window'),
+        });
+        ID = $(this).siblings('.id').html();
+	})
+	$('.btn-sure').click(function(){
+		$.ajax({
+		    url: 'workCheck.php',
+		    type: 'post',
+		    dataType:'json',
+		    data:{
+		    	id:ID,
+		    	type:1,
+		    },
+		    success:function(data){
+		    	if(data.status == 'success'){
+		    		layer.closeAll();
+		    		// alert('作品审核已通过')
+		    	}
+		    }
+		})	
+	})
+	$('.alllist').on('click','.Delete',function(){
+	    if(title_flag){
+            $('.window-work-head').html($(this).parents('.worklist').find('.large-head').html());
+		}
+		del_index= layer.open({
+                    type: 1,
+		            title: false,
+		            skin: 'layui-layer-demo', //样式类名
+		            closeBtn: 0, //不显示关闭按钮
+		            shift: 2,
+		            shadeClose: true, //开启遮罩关闭
+                    area: ['400px', '200px'], 
+                    content: $('.del-window'),
+        });
+        ID = $(this).siblings('.id').html();
+        $('.detail-id').html(ID);
+	})
+	$('.btn-right').click(function(){
+		layer.closeAll();
+	})
+	$('.btn-left').click(function(){
+		ID = $('.detail-id').html();
+		$.ajax({
+		    url: 'workDetail.php',
+		    type: 'post',
+		    dataType:'json',
+		    data:{
+		    	id:ID,
+		    },
+		    success:function(data){
+		    	if(data.status == 'success'){
+		    		layer.closeAll();
+		    		alert('作品已删除');
+		    		window.location.reload();
+		    	}else{
+		    		alert(data.message);
+		    	}
+		    }
+		})	
+	})
+	$('.btn-stop').click(function(){
+		ID = $('.detail-id').html();
+		var reason= $('.stop-reason').val();
+		$.ajax({
+		    url: 'workCheck.php',
+		    type: 'post',
+		    dataType:'json',
+		    data:{
+		    	id:ID,
+		    	type:0,
+		    	refuse_reason:reason,
+		    },
+		    success:function(data){
+		    	if(data.status == 'success'){
+		    		layer.closeAll();
+		    		alert('作品未通过审核');
+		    	}else{
+		    		alert(data.message);
+		    	}
+		    }
+		})	
+	})
+	// 详情页
+	var title_flag = true;
+	$('.alllist').on('click','.Detail',function(){
+	    title_flag = false;
+		$('#main-body').hide();
+		$('#detail-body').show();
+		var id = $(this).siblings('.id').html();
+		$('.detail-id').html(id);
+		ID = id;
+		$.ajax({
+		    url: 'workDetail.php',
+		    type: 'GET',
+		    dataType:'json',
+		    data:{
+		    	id:id,
+		    },
+		    success:function(data){
+				if (data.status=='success') {
+					$('.detial-pic-src').attr('src',"../"+data.work[0].main_img_src);
+					$('#detail-body .large-head').html(data.work[0].title);
+					$('.window-work-head').html(data.work[0].title);
+					$('.detail-des-body').html(data.work[0].description);
+					var img_len = data.work.img.length;
+					var ele_li_first = $('<li class="first"></li>');
+					var ele_li_second =$( '<li class=second"></li>');
+					console.log(data.work.img);
+					$.each(data.work.img,function(key,val){
+						if(key<3){
+							var ele_img = $('<img src="../'+data.work.img[key]+'" alt="" width="280" height="200">');
+							ele_li_first.append(ele_img);
+						}else{
+							var ele_img = $('<img src="../'+data.work.img[key]+'" alt="" width="280" height="200">');
+							ele_li_second.append(ele_img);
+						}
+					})
+					$('.Carousel').append(ele_li_first);
+					if(ele_li_second.html().length>0){
+						$('.Carousel').append(ele_li_second);
+						var href_1 = '<a href="javascript:void(0);" class="unslider-arrow04 prev"><img class="arrow" id="al" src="../images/arrowl.png" alt="prev" width="46" height="47"></a>';
+				        var href_2 = '<a href="javascript:void(0);" class="unslider-arrow04 next"><img class="arrow" id="ar" src="../images/arrowr.png" alt="next" width="46" height="47"></a>';
+				        $('.banner').append(href_1);
+				        $('.banner').append(href_2);
+					}
+			        
+			        var unslider04 = $('#b04').unslider({
+				        dots: false,
+				        autoplay:false,
+				    }),
+				    data04 = unslider04.data('unslider');
+				     
+				    $('.unslider-arrow04').click(function() {
+				        var fn = this.className.split(' ')[1];
+				        data04[fn]();
+				    });
+
+				}else{
+					alert(data.message);
+				}
+			}
+		})
+	});
+	$('.Stop').click(function(){
+		stop_index= layer.open({
+                    type: 1,
+		            title: false,
+		            skin: 'layui-layer-demo', //样式类名
+		            closeBtn: 0, //不显示关闭按钮
+		            shift: 2,
+		            shadeClose: true, //开启遮罩关闭
+                    area: ['400px', '300px'], 
+                    content: $('.stop-window'),
+        });
+	})
+    
+</script>

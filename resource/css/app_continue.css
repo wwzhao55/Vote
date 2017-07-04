@@ -1,0 +1,106 @@
+.input-group{
+    margin-left: 30px;    
+}
+.div-list{
+    margin-left: 30px;
+    height: 98px;
+    border-bottom: 1px solid #ccc;
+    line-height: 98px;
+    background-color: #fff;
+}
+.link-div{
+    margin-top: 40px;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
+}
+/*.label-input{
+    margin-left: 60px;
+}*/
+.label-info_last{
+    margin-left: 60px;
+    color: #bbb;
+    font-size: 28px;
+    border: none;
+    height: 60px;
+    line-height: 60px;
+}
+.span_link{
+    float: right;
+    /*margin-right: 40px;*/
+    /*margin-top: 30px;*/
+    color: #bbb;
+    font-size: 28px;
+}
+img.link-href {
+    margin-top: 38px;
+    margin-bottom: 36px;
+    margin-left: 30px;
+}
+.input-group-div{
+    background-color: #fff;
+}
+p.weui-tabbar__label{
+    font-size: 20px;
+}
+
+/*下面导航栏js样式*/
+.weui-bar__item--on_my p{
+  color:#F5A623;
+}
+.weui-tabbar:before {
+    top: -15px;
+    border-top: 0px solid #c0bfc4; 
+    /*background-color: #fff;*/
+}
+.weui-tabbar {
+    height: 118px;
+    padding-top: 15px;
+    background-color: #fff;
+}
+
+/*首页*/
+.text_cent{
+    text-align: center;
+    display: block;
+}
+.size1{
+    font-size: 60px;
+    margin-top: 80px;
+}
+.size2{
+    font-size: 40px;
+    color: #6c6c6c;
+    margin-top: 10px;
+}
+.size3{
+    font-size: 30px;
+    color: #6c6c6c;
+    margin-top: 50px;
+}
+.size4 {
+    top: 67.7%;
+    position: absolute;
+    margin: 0 auto;
+    left: 20.4%;
+    font-size: 30px;
+}
+.size4 span {
+    border: none;
+    width: 444px;
+    cursor: pointer;
+    color: #fbffff;
+    height: 94px;
+    display: inline-block;
+    line-height: 94px;
+}
+span.text_cent.size4.size44 {
+    margin-top: 128px;
+}
+.size5 {
+    color: #b4b5b9;
+    font-size: 24px;
+    margin-top: 40px;
+    position: absolute;
+    bottom: 125px;
+    left: 37.2%;
+}

@@ -1,0 +1,150 @@
+<style>
+.weui-bar__item--on_my p{
+  color:#F5A623;
+}
+.weui-tabbar:before {
+    top: -15px;
+    border-top: 0px solid #c0bfc4; 
+    /*background-color: #fff;*/
+}
+.weui-tabbar {
+    /*height: 118px;*/
+    height: 80px;
+    padding-top: 15px;
+    background-color: #fff;
+}
+</style>
+<!-- 全部作品 -->
+<div id='workList'>
+	<div id="searchBar">
+		<input type="search" id="searchInput" placeholder="搜作品/编号" required="">
+		<img src='public/images/search.png' id='searchImg'>
+	</div>
+</div>
+<div class="weui-tab" id="dh" style="    position: static;">
+
+  <div class="weui-tabbar" style=" ">
+    <a href="javascript:;" class="weui-tabbar__item">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/first.png" alt="">
+        <img src="public/images/first_active.png" alt="" style="display: none">
+      </div>
+      <p class="weui-tabbar__label">首页</p>
+    </a>
+    <a href="javascript:;" class="weui-tabbar__item ">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/actnote.png" alt="">
+        <img src="public/images/actnote_active.png" alt="" style="display: none">
+      </div>
+      <p class="weui-tabbar__label">活动介绍</p>
+    </a>
+    <a href="javascript:;" class="weui-tabbar__item weui-bar__item--on_my">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/allwork.png" alt="" style="display: none">
+        <img src="public/images/allwork_active.png" alt="">
+      </div>
+      <p class="weui-tabbar__label">全部作品</p>
+    </a>
+    <a href="javascript:;" class="weui-tabbar__item">
+      <div class="weui-tabbar__icon">
+        <img src="public/images/my.png" alt="" >
+        <img src="public/images/my_active.png" alt="" style="display: none">
+      </div>
+      <p class="weui-tabbar__label">我的</p>
+    </a>
+  </div>
+</div>
+<script>
+	$('title').html('苗绣银装-开门见山');
+	var page = 1;
+    // dropload
+    var dropload = $('body').dropload({
+        scrollArea : window,
+        domDown : {
+		    domClass : 'dropload-down',
+		    domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+		    domLoad : '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+		    domNoData : '<div class="dropload-noData">没有更多数据了</div>'
+		},
+        loadDownFn : function(me){
+        	console.log(page);
+        	var keyword = $('#searchInput').val();
+			$.ajax({
+				url: 'index.php?destination=workList',
+			    type: 'GET',
+			    dataType:'json',
+			    data:{
+			    	page:page,
+			    	keyword:keyword
+			    },
+				success: function(data){
+					page++;
+					if(data.status == 'success'){
+						var ele = '';
+						$.each(data.data,function(key,val){
+			    			ele += '<div class="workList">'+
+									'<a href=index.php?destination=workDetail&work_id='+val.id+' class="link_a">'+
+										'<div class="main-box">'+
+											'<img src="" class="main-img" style="background-image: url('+val.main_img_src+')">'+
+										'</div>'+
+									'</a>'+
+									'<div class="work-title">'+val.title+'</div>'+
+									'<div class="work-author">'+val.author_name+'</div>'+
+									'<div class="work-btn">'+
+										'<div class="work-judge">'+
+											'<img src="public/images/order.png">NO.<span>'+val.rank+'</span>'+
+										'</div>'+
+										'<div class="work-judge">'+
+											'<img src="public/images/vote.png">'+val.work_vote_count+'<span>票</span>'+
+										'</div>'+
+									'</div>'+
+								'</div>';
+			    		})
+            
+						// 为了测试，延迟1秒加载
+						setTimeout(function(){
+							$('#workList').append(ele);
+							// 每次数据加载完，必须重置
+							me.resetload();
+						},1000);
+					}else{
+						// 锁定
+						me.lock();
+						// 无数据
+						me.noData();
+						 // return false;
+						$('.dropload-down').html('没有更多数据了')
+					}	
+			},
+			error: function(xhr, type){
+				console.log('Ajax error!');
+				// 即使加载出错，也得重置
+				me.resetload();
+			}
+			});
+        },
+        threshold : 50
+    });
+
+
+  $(".weui-tabbar__item").on("click",function () {
+  $(".weui-bar__item--on_my img").eq(1).css("display","none");
+  $(".weui-bar__item--on_my img").eq(0).css("display","inline-block");
+  $(".weui-bar__item--on_my").removeClass("weui-bar__item--on_my");
+  $(this).addClass("weui-bar__item--on_my");
+  $(".weui-bar__item--on_my img").eq(0).css("display","none");
+  $(".weui-bar__item--on_my img").eq(1).css("display","inline-block");
+  // alert("跳转到"+$(".weui-bar__item--on_my p").html());
+    // 更新页面
+  var neirong=$(".weui-bar__item--on_my p").html();
+  if (neirong=='首页') {
+    window.location.href='index.php?destination=main&search_string=0';
+  } else if (neirong=='活动介绍') {
+    window.location.href='index.php?destination=main&search_string=1';    
+  } else if (neirong=='全部作品') {
+    window.location.href='index.php?destination=workList';    
+  } else if (neirong=='我的') {
+    window.location.href='index.php?destination=author';
+  }
+})
+</script>

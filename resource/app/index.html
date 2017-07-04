@@ -1,0 +1,556 @@
+<style>
+    .weui-bar__item--on_my p{
+        color:#F5A623;
+    }
+    .weui-tabbar:before {
+        top: -15px;
+        border-top: 0px solid #c0bfc4;
+        /*background-color: #fff;*/
+    }
+    .weui-tabbar {
+        /*height: 118px;*/
+        height: 80px;
+        padding-top: 15px;
+        background-color: #fff;
+    }
+</style>
+<!-- 首页################################################################## -->
+<div class="text_cent" id="text_cent">
+    <span class="text_cent size4">
+        <a href="index.php?destination=workEdit">
+            <span class="size40 btn_back">我要参赛</span>
+        </a>
+    </span>
+    <span class="text_cent size4 size44">
+        <span class="size41 btn_back">我要投票</span>
+    </span>
+    <span class="text_cent size5">下拉查看活动介绍</span>
+</div>
+<!-- 活动介绍############################################################## -->
+<div class="text_cent" id="text_cent2">
+    <img src="images/rule.png" alt="">
+</div>
+
+<!-- 全部作品############################################################### -->
+<div id='workList' hidden>
+    <div id="searchBar">
+        <input type="search" id="searchInput" placeholder="搜作品/编号" required="">
+        <img src='public/images/search.png' id='searchImg'>
+    </div>
+    <div id="allwork"></div>
+</div>
+
+<!-- 我的 ##################################################################-->
+<div id="myWork" hidden>
+    <div class="input-group-div">
+        <div class="input-group">
+            <span class="label-info">姓名</span>
+            <input type="text" name=""  class="label-info_last xinxi1" onkeydown="ChangeName(event)">
+        </div>
+        <div class="input-group">
+            <span class="label-info">国籍</span>
+            <input type="text" name=""  class="label-info_last xinxi2" id="Nationality" onchange="ChangeNationality()">
+        </div>
+        <div class="input-group">
+            <span class="label-info">电子邮箱</span>
+            <input type="text" name=""  class="label-info_last xinxi3" onkeydown="Email(event)">
+        </div>
+        <a href="index.php?destination=authorMobile">
+            <div class="input-group" style="margin-left: 0px;">
+                <span class="label-info" style="margin-left: 30px;">手机号</span>
+                <span class="label-info_last xinxi4"></span>
+                <img src="public/images/arrow.png" class="link-href">
+            </div>
+        </a>
+    </div>
+    <div class="link-div">
+        <a href="index.php?destination=authorWork">
+            <div class="div-list">
+                <span class="label-info">我的作品</span>
+                <img src="public/images/arrow.png" class="link-href">
+            </div>
+        </a>
+        <a href="index.php?destination=workEdit">
+            <div class="div-list" style="margin-left: 0px;">
+                <span class="label-info" style="margin-left: 30px;">草稿</span>
+                <img src="public/images/arrow.png" class="link-href">
+                <span class="span_link xinxi5"></span>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 底部导航栏 -->
+<div class="weui-tab" id="dh">
+    <div class="weui-tabbar" style=" ">
+        <a href="javascript:;" class="weui-tabbar__item weui-bar__item--on_my" id='tab_first'>
+            <div class="weui-tabbar__icon">
+                <img src="public/images/first.png" alt="" style="display: none" class="index-logo logo-static">
+                <img src="public/images/first_active.png" alt="" class="index-logo-active logo-active">
+            </div>
+            <p class="weui-tabbar__label index-color">首页</p>
+        </a>
+        <a href="javascript:;" class="weui-tabbar__item" id='tab_second'>
+            <div class="weui-tabbar__icon">
+                <img src="public/images/actnote.png" alt="" class="introduce-logo logo-static">
+                <img src="public/images/actnote_active.png" alt="" style="display: none" class='introduce-logo-active logo-active'>
+            </div>
+            <p class="weui-tabbar__label introduce-color">活动介绍</p>
+        </a>
+        <a href="javascript:;" class="weui-tabbar__item" id='tab_third'>
+            <div class="weui-tabbar__icon">
+                <img src="public/images/allwork.png" alt="" class="work-logo logo-static">
+                <img src="public/images/allwork_active.png" alt="" style="display: none" class='work-logo-active logo-active'>
+            </div>
+            <p class="weui-tabbar__label">全部作品</p>
+        </a>
+        <a href="javascript:;" class="weui-tabbar__item" id="tab_forth">
+            <div class="weui-tabbar__icon">
+                <img src="public/images/my.png" alt="" class='my-logo logo-static'>
+                <img src="public/images/my_active.png" alt="" style="display: none" class="my-logo-active logoactive">
+            </div>
+            <p class="weui-tabbar__label">我的</p>
+        </a>
+    </div>
+</div>
+
+<script>
+    var rule = true;
+    var hash = window.location.hash;
+    $(".weui-tabbar__item").on("click",function () {
+        $('body').scrollTop(0);
+        $(".weui-bar__item--on_my img").eq(1).css("display","none");
+        $(".weui-bar__item--on_my img").eq(0).css("display","inline-block");
+        $(".weui-bar__item--on_my").removeClass("weui-bar__item--on_my");
+        $(this).addClass("weui-bar__item--on_my");
+        $(".weui-bar__item--on_my img").eq(0).css("display","none");
+        $(".weui-bar__item--on_my img").eq(1).css("display","inline-block");
+        var neirong=$(".weui-bar__item--on_my p").html();
+        if (neirong=='首页') {
+            // window.location.href='index.php?destination=main&search_string=0';
+            rule = true;
+            $('#workList').hide();
+            $('#text_cent').show();
+            $('#text_cent2').show();
+            var height = $('#text_cent').height();
+            $('#text_cent').css('-webkit-transform', 'translate3d(0,0px,0)');
+            $('#text_cent2').css('-webkit-transform', 'translate3d(0,' + (height) + 'px,0)');
+            $('#myWork').hide();
+            window.location.hash = "#index";
+        } else if (neirong=='活动介绍') {
+            //window.location.href='index.php?destination=main&search_string=1';
+            rule = false;
+            $('#workList').hide();
+            $('#text_cent').hide();
+            $('#text_cent2').show();
+            $('#text_cent2').css('-webkit-transform', 'translate3d(0,0px,0)');
+            $('#myWork').hide();
+            window.location.hash = "#introduce";
+        } else if (neirong=='全部作品') {
+            // window.location.href='index.php?destination=workList';
+            rule = false;
+            $('#workList').show();
+            $('#text_cent').hide();
+            $('#text_cent2').hide();
+            $('#myWork').hide();
+            window.location.hash = "#all";
+            WorkList();
+        }else if (neirong=='我的') {
+            //window.location.href='index.php?destination=author';
+            rule = false;
+            Author();
+            $('#workList').hide();
+            $('#text_cent').hide();
+            $('#text_cent2').hide();
+            $('#myWork').show();
+            window.location.hash = "#my";
+        }
+    })
+
+    if (hash === "#index") {
+        rule = true;
+        $('#workList').hide();
+        $('#text_cent').show();
+        $('#text_cent2').show();
+        $('#myWork').hide();
+        $('#text_cent').css('-webkit-transform', 'translate3d(0,0px,0)');
+        // $('#text_cent2').css('-webkit-transform', 'translate3d(0,' + (height) + 'px,0)');
+        $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+        $('#tab_first').addClass('weui-bar__item--on_my');
+        $('.logo-static').show();
+        $('.logo-active').hide();
+        $('.index-logo').hide();
+        $('.index-logo-active').show();
+    }else if(hash === "#introduce"){
+        rule = false;
+        $('#workList').hide();
+        $('#text_cent').hide();
+        $('#text_cent2').css('-webkit-transform', 'translate3d(0,0px,0)');
+        $('#myWork').hide();
+        $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+        $('#tab_second').addClass('weui-bar__item--on_my');
+        $('.logo-static').show();
+        $('.logo-active').hide();
+        $('.introduce-logo').hide();
+        $('.introduce-logo-active').show();
+    }else if(hash === "#all"){
+        rule = false;
+        $('#workList').show();
+        $('#text_cent').hide();
+        $('#text_cent2').hide();
+         $('.section').hide();
+        $('#myWork').hide();
+        WorkList();
+        $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+        $('#tab_third').addClass('weui-bar__item--on_my');
+        $('.logo-static').show();
+        $('.logo-active').hide();
+        $('.work-logo').hide();
+        $('.work-logo-active').show();
+    }else if(hash === "#my"){
+            rule = false;
+            Author();
+            $('#workList').hide();
+            $('#text_cent').hide();
+            $('#text_cent2').hide();
+            $('#myWork').show();
+            $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+            $('#tab_forth').addClass('weui-bar__item--on_my');
+            $('.logo-static').show();
+            $('.logo-active').hide();
+            $('.my-logo').hide();
+            $('.my-logo-active').show();
+    }
+
+    $('.size41').click(function(){
+        $('#tab_third').click();
+    })
+
+    function WorkList(){
+        $('title').html('苗绣银装');
+        var page = 1;
+        if (page == 1) {
+            $('#allwork').empty();
+            $('.dropload-down').remove();
+        }
+        // dropload
+        var dropload = $('#workList').dropload({
+            scrollArea : window,
+            domDown : {
+                domClass : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad : '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+                domNoData : '<div class="dropload-noData">没有更多数据了</div>'
+            },
+            loadDownFn : function(me){
+                console.log(page);
+                var keyword = $('#searchInput').val();
+                $.ajax({
+                    url: 'index.php?destination=workList',
+                    type: 'GET',
+                    dataType:'json',
+                    data:{
+                        page:page,
+                        keyword:keyword
+                    },
+                    success: function(data){
+                        page++;
+                        if(data.status == 'success'){
+                            var ele = '';
+                            $.each(data.data,function(key,val){
+                                ele += '<div class="workList">'+
+                                    '<a href=index.php?destination=workDetail&work_id='+val.id+' class="link_a">'+
+                                    '<div class="main-box">'+
+                                    '<img src="" class="main-img" style="background-image: url('+val.main_img_src+')">'+
+                                    '</div>'+
+                                    '</a>'+
+                                    '<div class="work-title">'+val.title+'－<span>'+parseInt((val.id)*1+10000)+'</span></div>'+
+                                    '<div class="work-author">'+val.author_name+'</div>'+
+                                    '<div class="work-btn">'+
+                                    '<div class="work-judge">'+
+                                    '<img src="public/images/order.png">NO.<span>'+val.rank+'</span>'+
+                                    '</div>'+
+                                    '<div class="work-judge">'+
+                                    '<img src="public/images/vote.png">'+val.work_vote_count+'<span>票</span>'+
+                                    '</div>'+
+                                    '</div>'+
+                                    '</div>';
+                            })
+                            // 为了测试，延迟1秒加载
+                            setTimeout(function(){
+                                $('#allwork').append(ele);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                            },1000);
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                            // return false;
+                            $('.dropload-down').html('没有更多数据了')
+                        }
+                    },
+                    error: function(xhr, type){
+                        $.alert('获取数据失败!');
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+    }
+
+    function Author(){
+        $.ajax({
+            url: 'index.php?destination=author',
+            type: 'get',
+            dataType:'json',
+            success: function(data){
+                if(data.status == 'success'){
+                    $(".xinxi1").val(data.author.name);
+                    $(".xinxi2").val(data.author.nationality);
+                    $(".xinxi3").val(data.author.email);
+                    $(".xinxi4").html(data.author.mobile);
+                    $(".xinxi5").html(data.author.count);
+                }else{
+                    $.alert(data.message)
+                }
+            }
+        })
+    }
+    function ChangeName(){
+        if (event.keyCode==13) {
+            if(!$('.xinxi1').val().length){
+                $.alert('请输入姓名')
+                $('.xinxi1').focus();
+            }else{
+                $.ajax({
+                    url: 'index.php?destination=authorMobile',
+                    type: 'post',
+                    dataType:'json',
+                    data:{
+                        name:$('.xinxi1').val()
+                    },
+                    success: function(data){
+                        if(data.status == 'success'){
+                            $.alert(data.message);
+                        }else{
+                            $.alert(data.message);
+                        }
+                    }
+                })
+            }
+        }
+    }
+    function Email(){
+        var re= /\w@\w*\.\w/;
+        if (event.keyCode==13) {
+            if(!re.test($('.xinxi3').val())){
+                $.alert('请输入正确的邮箱地址')
+                $('.xinxi3').focus();
+            }else{
+                $.ajax({
+                    url: 'index.php?destination=authorMobile',
+                    type: 'post',
+                    dataType:'json',
+                    data:{
+                        email:$('.xinxi3').val()
+                    },
+                    success: function(data){
+                        if(data.status == 'success'){
+                            $.alert(data.message);
+                        }else{
+                            $.alert(data.message);
+                        }
+                    }
+                })
+            }
+        }
+    }
+    $("#Nationality").select({
+        title: "选择国籍",
+        items:["中国","香港","台湾","澳门","美国","阿根廷","安道尔","阿联酋","阿富汗","安提瓜和巴布达","安圭拉","阿尔巴尼亚","亚美尼亚","安哥拉","南极洲","美属萨摩亚","奥地利","澳大利亚","阿鲁巴","奥兰群岛","阿塞拜疆","波黑","巴巴多斯","孟加拉","比利时","布基纳法索","保加利亚","巴林","布隆迪","贝宁","圣巴泰勒米岛","百慕大","文莱","玻利维亚","荷兰加勒比区","巴西","巴哈马","不丹","布韦岛","博茨瓦纳","白俄罗斯","伯利兹","加拿大","科科斯群岛","刚果","中非","瑞士","科特迪瓦","库克群岛","智利","喀麦隆","哥伦比亚","哥斯达黎加","古巴","佛得角","库拉索","圣诞岛","塞浦路斯","捷克","德国","吉布提","丹麦","多米尼克","多米尼加","阿尔及利亚","厄瓜多尔","爱沙尼亚","埃及","西撒哈拉","厄立特里亚","西班牙","埃塞俄比亚","芬兰","斐济群岛","马尔维纳斯群岛（福克兰）","密克罗尼西亚联邦","法罗群岛","法国 法国","加蓬","英国","格林纳达","格鲁吉亚","法属圭亚那","根西岛","加纳","直布罗陀","格陵兰","冈比亚","几内亚","瓜德罗普","赤道几内亚","希腊","南乔治亚岛和南桑威奇群岛","危地马拉","关岛","几内亚比绍","圭亚那","赫德岛和麦克唐纳群岛","洪都拉斯","克罗地亚","海地","匈牙利","印尼","爱尔兰","以色列","马恩岛","印度","英属印度洋领地","伊拉克","伊朗","冰岛","意大利","泽西岛","牙买加","约旦","日本","肯尼亚","吉尔吉斯斯坦","柬埔寨","基里巴斯","科摩罗","圣基茨和尼维斯","朝鲜","韩国","科威特","开曼群岛","哈萨克斯坦","老挝","黎巴嫩","圣卢西亚","列支敦士登","斯里兰卡","利比里亚","莱索托","立陶宛","卢森堡","拉脱维亚","利比亚","摩洛哥","摩纳哥","摩尔多瓦","黑山","法属圣马丁","马达加斯加","马绍尔群岛","马其顿","马里","缅甸","蒙古国","北马里亚纳群岛","马提尼克","毛里塔尼亚","蒙塞拉特岛","马耳他","毛里求斯","马尔代夫","马拉维","墨西哥","马来西亚","莫桑比克","纳米比亚","新喀里多尼亚","尼日尔","诺福克岛","尼日利亚","尼加拉瓜","荷兰","挪威","尼泊尔","瑙鲁","纽埃","新西兰","阿曼","巴拿马","秘鲁","法属波利尼西亚","巴布亚新几内亚","菲律宾","巴基斯坦","波兰","圣皮埃尔和密克隆","皮特凯恩群岛","波多黎各","巴勒斯坦","葡萄牙","帕劳","巴拉圭","卡塔尔","留尼汪","罗马尼亚","塞尔维亚","俄罗斯","卢旺达","沙特阿拉伯","所罗门群岛","塞舌尔","苏丹","瑞典","新加坡","圣赫勒拿","斯洛文尼亚","斯瓦尔巴群岛和扬马延岛","斯洛伐克","塞拉利昂","圣马力诺","塞内加尔","索马里","苏里南","南苏丹","圣多美和普林西比","萨尔瓦多","荷属圣马丁","叙利亚","斯威士兰","特克斯和凯科斯群岛","乍得","法属南部领地","多哥","泰国","塔吉克斯坦","托克劳","东帝汶","土库曼斯坦","突尼斯","汤加","土耳其","特立尼达和多巴哥","图瓦卢","坦桑尼亚","乌克兰","乌干达","美国本土外小岛屿","乌拉圭","乌兹别克斯坦","梵蒂冈","圣文森特和格林纳丁斯","委内瑞拉","英属维尔京群岛","美属维尔京群岛","越南","瓦努阿图","瓦利斯和富图纳","萨摩亚","也门","马约特","南非","赞比亚","津巴布韦"]
+    });
+    function ChangeNationality(){
+        $.ajax({
+                    url: 'index.php?destination=authorMobile',
+                    type: 'post',
+                    dataType:'json',
+                    data:{
+                       nationality:$('#Nationality').val()
+                    },
+                    success: function(data){
+                        if(data.status == 'success'){
+                            $.alert(data.message);
+                        }else{
+                            $.alert(data.message);
+                        }
+                    }
+                })
+    }
+
+    var $index = $('#text_cent');
+    var $rule = $('#text_cent2');
+    var pageHeight = $index.height();
+    $rule.css('-webkit-transform', 'translate3d(0,' + pageHeight + 'px,0)');
+
+    var sliderOpts = {
+        curPage: 1,
+        indexPos: 0,
+        rulePos: 0,
+        timer: null,
+        duration: 300,
+        range: 70,
+        startY: 0,
+        distance: 0,
+        noSlider: false,
+        sliderWait: false,
+        buttonPressed: false
+    };
+
+    var handleStart = function (event) {
+        sliderOpts.distance = 0;
+        var touch = event.touches[0];
+        var ele = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (($(window).height() - touch.clientY < 95) || !rule || (sliderOpts.curPage == 2 && document.body.scrollTop > 0)) {
+            sliderOpts.noSlider = true;
+            return;
+        }
+
+        sliderOpts.buttonPressed = $(ele).hasClass('size40') || $(ele).hasClass('size41');
+        sliderOpts.sliderWait = sliderOpts.curPage == 2 && document.body.scrollTop == 0;
+        if (!(sliderOpts.buttonPressed || sliderOpts.sliderWait)) event.preventDefault();
+        
+        sliderOpts.noSlider = false;
+        if (sliderOpts.timer) return;
+        sliderOpts.startY = touch.clientY;
+        sliderOpts.indexPos = $("#text_cent").offset().top;
+        sliderOpts.rulePos = $("#text_cent2").offset().top;
+    };
+
+    var handleMove = function (event) {
+        if (sliderOpts.noSlider || sliderOpts.timer) return;
+        sliderOpts.buttonPressed = false;
+        var touch = event.touches[0];
+        sliderOpts.distance = touch.clientY - sliderOpts.startY;
+        if (sliderOpts.sliderWait && sliderOpts.distance < 0) {
+            sliderOpts.noSlider = true;
+            return;
+        } else {
+            event.preventDefault();
+        }
+        if (Math.abs(sliderOpts.distance) < 5) return;
+        $("#text_cent").css('-webkit-transform', 'translate3d(0,' + (sliderOpts.indexPos + sliderOpts.distance) + 'px,0)');
+        $("#text_cent2").css('-webkit-transform', 'translate3d(0,' + (sliderOpts.rulePos + sliderOpts.distance) + 'px,0)');
+    };
+
+    var handleEnd = function (event) {
+        if (sliderOpts.noSlider || sliderOpts.buttonPressed) return;
+        event.preventDefault();
+        if (sliderOpts.timer) return;
+        $('#text_cent,#text_cent2').css('-webkit-transition', '-webkit-transform ' + sliderOpts.duration + 'ms linear');
+        var $index = $('#text_cent');
+        var $rule = $('text_cent2');
+        var pageHeight = $index.height();
+        if ((sliderOpts.distance < -sliderOpts.range && sliderOpts.curPage == 1) || (sliderOpts.distance > sliderOpts.range && sliderOpts.curPage == 2)) {
+            var next = sliderOpts.distance < -sliderOpts.range;
+            $(next ? '#text_cent' : '#text_cent2').css('-webkit-transform', 'translate3d(0,' + (next ? (-pageHeight) : pageHeight) + 'px,0)');
+            $(next ? '#text_cent2' : '#text_cent').css('-webkit-transform', 'translate3d(0,0px,0)');
+
+            sliderOpts.timer = setTimeout(function() {
+                $('#text_cent,#text_cent2').css({
+                    '-webkit-transition': ''
+                });
+                clearTimeout(sliderOpts.timer);
+                sliderOpts.curPage = next ? 2: 1;
+                sliderOpts.timer = null;
+            }, sliderOpts.duration + 5);
+        } else {
+            if (sliderOpts.curPage == 1) {
+                $index.css('-webkit-transform', 'translate3d(0,0px,0)');
+                $rule.css('-webkit-transform', 'translate3d(0,' + pageHeight + 'px,0)');
+                $('.index-logo').hide();
+                $('.index-logo-active').show();
+                $('.introduce-logo-active').hide();
+                $('.introduce-logo').show();
+                $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+                $('#tab_first').addClass('weui-bar__item--on_my');
+            } else {
+                $rule.css('-webkit-transform', 'translate3d(0,0px,0)');
+                $index.css('-webkit-transform', 'translate3d(0,' + (-pageHeight) + 'px,0)');
+                $('.index-logo').show();
+                $('.index-logo-active').hide();
+                $('.introduce-logo-active').show();
+                $('.introduce-logo').hide();
+                $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+                $('#tab_second').addClass('weui-bar__item--on_my');
+            }
+            sliderOpts.timer = setTimeout(function() {
+                $('#text_cent,#text_cent2').css({
+                    '-webkit-transition': ''
+                });
+                clearTimeout(sliderOpts.timer);
+                sliderOpts.timer = null;
+            }, sliderOpts.duration + 5);
+        }
+    };
+
+    var handleCancel = function (event) {
+        if (sliderOpts.noSlider) return;
+        event.preventDefault();
+        if (sliderOpts.timer) return;
+        $('#text_cent,#text_cent2').css('-webkit-transition', '-webkit-transform ' + sliderOpts.duration + 'ms linear');
+        var $index = $('#text_cent');
+        var $rule = $('text_cent2');
+        var pageHeight = $index.height();
+        if ((sliderOpts.distance < -sliderOpts.range && sliderOpts.curPage == 1) || (sliderOpts.distance > sliderOpts.range && sliderOpts.curPage == 2)) {
+            var next = sliderOpts.distance < -sliderOpts.range;
+            $(next ? '#text_cent' : '#text_cent2').css('-webkit-transform', 'translate3d(0,' + (next ? (-pageHeight) : pageHeight) + 'px,0)');
+            $(next ? '#text_cent2' : '#text_cent').css('-webkit-transform', 'translate3d(0,0px,0)');
+
+            sliderOpts.timer = setTimeout(function() {
+                $('#text_cent,#text_cent2').css({
+                    '-webkit-transition': ''
+                });
+                sliderOpts.curPage = next ? 2: 1;
+                if (next) document.body.scrollTop = 1;
+                clearTimeout(sliderOpts.timer);
+                sliderOpts.timer = null;
+            }, sliderOpts.duration + 5);
+        } else {
+            if (sliderOpts.curPage == 1) {
+                $index.css('-webkit-transform', 'translate3d(0,0px,0)');
+                $rule.css('-webkit-transform', 'translate3d(0,' + pageHeight + 'px,0)');
+                $('.index-logo').show();
+                $('.index-logo-active').hide();
+                $('.introduce-logo-active').show();
+                $('.introduce-logo').hide();
+                $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+                $('#tab_second').addClass('weui-bar__item--on_my');
+            } else {
+                $rule.css('-webkit-transform', 'translate3d(0,0px,0)');
+                $index.css('-webkit-transform', 'translate3d(0,' + (-pageHeight) + 'px,0)');
+                $('.index-logo').hide();
+                $('.index-logo-active').show();
+                $('.introduce-logo-active').hide();
+                $('.introduce-logo').show();
+                $('.weui-tabbar__item').removeClass('weui-bar__item--on_my');
+                $('#tab_first').addClass('weui-bar__item--on_my');
+            }
+            sliderOpts.timer = setTimeout(function() {
+                $('#text_cent,#text_cent2').css({
+                    '-webkit-transition': ''
+                });
+                clearTimeout(sliderOpts.timer);
+                sliderOpts.timer = null;
+            }, sliderOpts.duration + 5);
+        }
+    };
+
+    document.addEventListener("touchstart", handleStart, false);
+    document.addEventListener("touchend", handleEnd, false);
+    document.addEventListener("touchcancel", handleCancel, false);
+    document.addEventListener("touchmove", handleMove, false);
+</script>

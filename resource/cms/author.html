@@ -1,0 +1,192 @@
+<script src="../resource/plugin/jquery.bootpag.min.js"></script>
+<style>
+.ax_default {
+  font-family:'Arial Normal', 'Arial';
+  font-weight:400;
+  font-style:normal;
+  font-size:13px;
+  color:#333333;
+  text-align:center;
+  line-height:normal;
+}
+._一级标题 {
+  font-family:'Arial Normal', 'Arial';
+  font-weight:bold;
+  font-style:normal;
+  font-size:32px;
+  text-align:left;
+}
+
+.u798_div {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:252px;
+  height:37px;
+  background:inherit;
+  background-color:rgba(255, 255, 255, 0);
+  border:none;
+  border-radius:0px;
+  -moz-box-shadow:none;
+  -webkit-box-shadow:none;
+  box-shadow:none;
+  font-family:'Arial Negreta', 'Arial Normal', 'Arial';
+  font-weight:700;
+  font-style:normal;
+}
+.u798 {
+  border-width:0px;
+  position:absolute;
+  left:232px;
+  top:80px;
+  width:252px;
+  height:37px;
+  font-family:'Arial Negreta', 'Arial Normal', 'Arial';
+  font-weight:700;
+  font-style:normal;
+}
+.u799 {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:252px;
+  white-space:nowrap;
+}
+
+table.table_style {
+    background-color: #fff;
+    width: 100%;
+    margin-top: 100px;
+    border: 1px solid #dcdcdc;
+    /*min-width: 1200px;*/
+}
+
+.table_style th {
+    height: 60px;
+    text-align: center;
+    border: 1px solid #dcdcdc;
+    font-size: 16px;
+    color: #d1af94;
+    background-color: #f5f5f5;
+}
+
+.table_style td {
+    border: 1px solid #dcdcdc;
+    height: 50px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+}
+
+</style>
+<div class="u535 ax_default">
+	<table class="table_style">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>姓名</th>
+				<th>国籍</th>
+				<th>电子邮箱</th>
+				<th>手机号</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+			</tr>
+		</tbody>
+	</table>
+	<div id="pagnation2" style="" class='text-align'></div>
+
+</div>
+
+<div class="u798 ax_default _一级标题">
+	<div class="u798_div" ></div>
+	<div class="u799 text">
+		<p>
+			<span>苗绣银装 / 报名选手</span>
+		</p>
+	</div>
+</div>
+<script type="text/javascript">
+	$('#sider-book').addClass('active');
+	$.get('author.php',{name:'111'},function(data){
+	    console.log(data);
+    })
+
+$(function(){
+	PassData(0);
+})
+
+function 	PassData(page){
+		$.ajax({
+		    url: 'author.php',
+		    type: 'GET',
+		    dataType:'json',
+		    data:{
+		    	page:page
+		    },
+		    success:function(data){
+				if (data.status=='success') {
+					console.log(Math.floor(data.total)); 
+					$('tbody').empty();
+					$.each(data.author,function(key,val){
+						var ele1=	'<tr>'+
+						        	'<td>'+val.id+'</td>'+
+									'<td>'+val.name+'</td>'+
+									'<td>'+val.nationality+'</td>'+
+									'<td>'+val.email+'</td>'+
+									'<td>'+val.mobile+'</td>'+
+									'</tr>';
+						$('tbody').append(ele1);
+					});
+
+					if (data.total>10) {
+						$('#pagnation2').bootpag({
+							    total: (data.total+10)/10,
+							    maxVisible: 6,
+		                }).on("page", function (event, num) {
+		                      		$.ajax({
+										    url: 'author.php',
+										    type: 'GET',
+										    dataType:'json',
+										    data:{
+										    	page:num-1
+										    },
+										    success:function(data){
+												if (data.status=='success') {
+													$('tbody').empty();
+													$.each(data.author,function(key,val){
+														var ele1=	'<tr>'+
+														        	'<td>'+val.id+'</td>'+
+																	'<td>'+val.name+'</td>'+
+																	'<td>'+val.sex+'</td>'+
+																	'<td>'+val.people+'</td>'+
+																	'<td>'+val.education+'</td>'+
+																	'<td>'+val.occupation+'</td>'+
+																	'<td>'+val.address+'</td>'+
+																	'<td>'+val.mobile+'</td>'+
+																	'</tr>';
+														$('tbody').append(ele1);
+													})
+													
+
+												}else{
+													alert(data.message);
+												}
+
+											}
+										})
+		                });
+		            }	
+				}else{
+					alert(data.message);
+				}
+			}
+		})
+	}
+</script>
+
+
+
